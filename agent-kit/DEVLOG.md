@@ -41,6 +41,37 @@ Evidence: <commit / tag / gate run / screenshot>
 
 <!-- Entries below, newest first. -->
 
+## 2026-09-14 — Added a download button for the kit
+
+Issue #12 asked for a way to get the kit without cloning the repo: a
+download button for the current zip. The site is a folder of prerendered
+files with no server, so there was nowhere to assemble a zip on request.
+We build it instead: a small dependency-free zip writer in
+`src/lib/server/zip.ts`, and a script that walks `agent-kit/` and writes
+`static/agent-kit.zip` before every dev run and every build, so the
+download always matches the repository's current files rather than a
+stale copy someone forgot to regenerate.
+
+We considered shelling out to the system `zip` binary, which is simpler,
+but it is not guaranteed to exist everywhere `npm run build` runs, and
+the project otherwise has one runtime dependency. Writing the format
+ourselves with `node:zlib` for the compression kept the build portable.
+The writer's test round-trips its own output — extracts each entry
+independently of the code that wrote it and compares bytes and CRCs — and
+`unzip` in a real terminal opened the same archive cleanly.
+
+The button lives on the homepage next to "Read the kit" and again on the
+docs page, and its link is a plain static asset so it survives the
+GitHub Pages subdirectory case the same way every other asset does.
+
+This shipped ahead of the Feature Queue: it is a human-filed issue, not a
+roadmap item, and the queue only flows one way today (roadmap → issues).
+See the Queue changes log in ROADMAP.md.
+
+Evidence: `npm run verify` green. 6 test files, 54 tests, 0 failures.
+`static/agent-kit.zip` built and read back correctly under both the root
+path and a `BASE_PATH` subdirectory build.
+
 ## 2026-09-14 — The first live runs found two faults
 
 CI ran on `main` and passed. Then two things did not work.

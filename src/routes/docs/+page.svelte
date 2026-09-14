@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { asset, resolve } from '$app/paths';
 	import { groupedDocs } from '$lib/content';
 
 	const groups = groupedDocs();
@@ -22,6 +22,9 @@
 <p class="muted">
 	Start with <a href={resolve('/docs/[slug]', { slug: 'routing' })}>ROUTING.md</a>. It says which
 	file governs which situation.
+</p>
+<p class="muted">
+	<a href={asset('/agent-kit.zip')} download>Download every file as a zip →</a>
 </p>
 
 {#each groups as group (group.group)}

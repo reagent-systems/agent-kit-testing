@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { asset, resolve } from '$app/paths';
 	import { docs, posts } from '$lib/content';
 
 	const latest = posts.slice(0, 3);
@@ -76,6 +76,7 @@
 	</p>
 	<p class="actions">
 		<a class="button" href={resolve('/docs')}>Read the kit</a>
+		<a class="button secondary" href={asset('/agent-kit.zip')} download>Download the kit (.zip)</a>
 		<a href={resolve('/blog')}>Read the devlog posts</a>
 	</p>
 </section>
@@ -154,6 +155,12 @@
 		padding: 0.5rem 1.1rem;
 		border-radius: var(--radius);
 		font-weight: 550;
+	}
+
+	.button.secondary {
+		background: var(--surface);
+		color: var(--text);
+		border: 1px solid var(--border);
 	}
 
 	section + section {
