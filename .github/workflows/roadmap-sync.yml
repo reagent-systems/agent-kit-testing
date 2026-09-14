@@ -1,0 +1,54 @@
+name: Roadmap sync
+
+# Mirrors the ROADMAP.md Feature Queue into GitHub issues.
+#
+# ROADMAP.md is the source of work. This job makes the queue visible on
+# GitHub, where feedback arrives. It creates an issue for a new item,
+# updates an issue that drifted, and closes an issue whose item left the
+# queue. Issue edits are overwritten; the roadmap is what changes.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'agent-kit/ROADMAP.md'
+      - 'src/lib/roadmap.ts'
+      - 'scripts/sync-issues.ts'
+      - '.github/workflows/roadmap-sync.yml'
+  pull_request:
+    paths:
+      - 'agent-kit/ROADMAP.md'
+      - 'src/lib/roadmap.ts'
+      - 'scripts/sync-issues.ts'
+  workflow_dispatch:
+
+concurrency:
+  group: roadmap-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # A pull request must not write issues. It prints the plan instead,
+      # so a roadmap change can be reviewed before it files anything.
+      - name: Plan (pull request)
+        if: github.event_name == 'pull_request'
+        run: node scripts/sync-issues.ts --dry-run
+
+      - name: Sync
+        if: github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: node scripts/sync-issues.ts

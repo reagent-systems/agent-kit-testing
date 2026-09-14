@@ -10,16 +10,49 @@
 | Stale sweep | Automated | `stale.yml` (CI.md) |
 | Health check | Per PR + nightly | `{{VERIFY_CMD}}` in CI |
 
+## The ticket pool
+
+Issues are the single pool of work. Three sources fill it:
+
+| Source | How it arrives | Label |
+|---|---|---|
+| A person | Issue form (`bug`, `enhancement`) | `needs-triage` |
+| The roadmap | `roadmap-sync.yml` mirrors each Feature Queue item | `roadmap` |
+| The repo itself | `nightly.yml` files a failing gate | `ci-failure` |
+
+The roadmap items are the planned work, already broken into pieces with a
+promise each. The other two are unplanned. Triage decides which of them
+become roadmap items and which are closed with a reason.
+
+An agent working the pool takes the top `roadmap` + `ready` ticket first,
+then `ci-failure`, then triage. It never takes a `needs-triage` ticket as
+feature work — an untriaged ticket has no promise, so nothing says when it
+is done.
+
 ## Triage labels
 
-`bug` · `enhancement` · `docs` · `good first issue` · `help wanted` ·
-`needs-repro` · `blocked` · `wontfix` · `security` · `ci-failure`
+Kind: `bug` · `enhancement` · `docs` · `security` · `ci-failure` ·
+`feedback`
+
+State: `needs-triage` · `needs-repro` · `ready` · `in progress` ·
+`blocked` · `wontfix`
+
+Source: `roadmap` (generated — do not add by hand)
+
+Help wanted: `good first issue` · `help wanted`
+
+`roadmap-sync.yml` owns the `roadmap` label and the state label on the
+issues it generates. Do not hand-edit those issues; change ROADMAP.md.
 
 ## Issue lifecycle
 
 new → labeled → (needs-repro?) → accepted (queued on ROADMAP.md if it's
 feature-shaped) → in progress → closed by PR or closed-with-reason.
 Never close silently; one sentence of why is the minimum.
+
+A feature-shaped ticket that is accepted leaves the pool and comes back
+as a `roadmap` ticket once it has a promise and its evidence. The
+original ticket closes with a link to it, so the work is in one place.
 
 ## Deprecation policy
 

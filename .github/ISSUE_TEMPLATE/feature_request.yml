@@ -1,0 +1,32 @@
+name: Feature request
+description: Ask for behavior the project does not have.
+labels: [enhancement, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Triage moves an accepted request onto `agent-kit/ROADMAP.md`. It comes
+        back as a `roadmap` issue once it has a promise and its evidence.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: State what you cannot do today. Describe the problem, not the solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: What done looks like
+      description: One sentence that is true when this is finished. This becomes the roadmap item's promise.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you do instead today
+    validations:
+      required: false

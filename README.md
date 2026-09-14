@@ -1,18 +1,29 @@
-# repo-automation-test
+# agent-kit-testing
 
-A sacrificial test repo. It exists to test one idea: GitHub Issues as the
-input channel and the work queue for an autonomous development agent.
+The agent kit proving itself on a real codebase.
 
-The intended shape:
+`agent-kit/` holds a process an AI agent runs: the contract for changing
+code, the queue that decides what gets built, the gate that decides what
+ships, and the voice it writes in. The codebase it governs is a SvelteKit
+site about the kit. The site renders the kit's own files, so the docs
+cannot drift from the process they describe.
 
-1. User feedback arrives by email.
-2. Each item becomes a GitHub issue.
-3. Issues feed `agent-kit/ROADMAP.md`.
-4. An agent takes the top ready item, builds it, verifies it, and ships it.
-5. The cycle repeats.
+## The loop under test
 
-The codebase under test is a SvelteKit app. It gives the agent real code
-to change and a real gate to pass.
+1. **Feedback arrives.** A person opens an issue, or an email becomes one.
+2. **The roadmap decides.** `agent-kit/ROADMAP.md` holds the queue. Each
+   item carries one testable promise and the evidence that proves it.
+3. **The queue becomes tickets.** `roadmap-sync.yml` mirrors each item into
+   a labelled GitHub issue. The roadmap stays the source; issues are its
+   surface, and the single pool an agent works from.
+4. **The agent builds.** It takes the top ready ticket and runs the weekly
+   cycle: spec, build, prove, document, ship.
+5. **The gate decides.** `npm run verify` answers whether the repo is
+   healthy. No green, no push.
+6. **The work is told.** The devlog records what happened. The blog-post
+   skill turns it into a post. This site publishes it.
+
+Maintenance and marketing run on the same cycle.
 
 ## Stack
 
@@ -28,27 +39,42 @@ npm run build     # production build into build/
 npm run verify    # the gate: lint, check, build, test
 ```
 
-`npm run verify` is the one command that answers "is this repo healthy".
-CI runs the same command.
+CI runs the same `npm run verify`.
+
+## The roadmap sync
+
+```sh
+node scripts/sync-issues.ts --dry-run   # print the plan, write nothing
+node scripts/sync-issues.ts             # apply it
+```
+
+Applying needs `GITHUB_TOKEN` and `GITHUB_REPOSITORY`. In CI this runs
+from `.github/workflows/roadmap-sync.yml` on a push to `main` that touches
+the roadmap. On a pull request it prints the plan and writes nothing.
+
+Issues it generates are overwritten on the next run. To change one, change
+`agent-kit/ROADMAP.md`.
 
 ## Testing
 
-Vitest runs two projects. `server` runs plain unit tests in Node.
-`client` runs component tests in a real Chromium through Playwright.
+Vitest runs two projects. `server` runs unit tests in Node. `client` runs
+component tests in a real Chromium through Playwright.
 
 The component tests need a Chromium. Install one with
-`npx playwright install chromium`, or set `CHROMIUM_PATH` to a Chromium
-that is already on the machine:
+`npx playwright install chromium`, or point at one already on the machine:
 
 ```sh
 CHROMIUM_PATH=/path/to/chromium npm run verify
 ```
 
+Without a Chromium the gate fails rather than skipping. That contradicts
+`agent-kit/VERIFICATION.md` and is item 1 on the queue.
+
 ## Process
 
-`agent-kit/` holds the process files that govern the agent. Start at
-`agent-kit/ROUTING.md`.
+Start at [`agent-kit/ROUTING.md`](agent-kit/ROUTING.md). It says which file
+governs which situation.
 
-The kit is not tailored yet. `agent-kit/SETUP.md` has not run, so
-`{{PLACEHOLDER}}` values are still present and the roadmap has no seeded
-queue.
+The kit is partly tailored. The roadmap and use cases describe this
+repository, but `{{PLACEHOLDER}}` values remain in other kit files.
+Finishing that is item 4 on the queue.

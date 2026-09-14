@@ -5,12 +5,20 @@ from here. If it isn't on this roadmap, it doesn't get built; if it needs
 building, it gets added here first. One item ships per weekly cycle
 (see `WEEKLY.md`).
 
+A CI job mirrors the Feature Queue below into GitHub issues
+(`.github/workflows/roadmap-sync.yml`). The roadmap is the source. The
+issues are its surface, so the queue is visible where feedback arrives.
+Edits made on an issue are overwritten; change this file instead.
+
 ## North star
 
-<!-- One paragraph: what this project is becoming. The queue below must
-     visibly serve this. -->
-
-{{PROJECT_NAME}} is …
+agent-kit-testing is the kit proving itself on a real codebase. The
+repository holds a SvelteKit site about the kit, and the kit runs the
+repository. Every claim the site makes about automated maintenance and
+automated marketing is a claim this repository has to demonstrate on
+itself: the queue below ships features, the gate proves them, and the
+blog publishes the write-up from the devlog. A reader who doubts the kit
+can read this repository's history and check.
 
 ## Feature Queue — ordered; top unblocked item ships next
 
@@ -24,28 +32,43 @@ building, it gets added here first. One item ships per weekly cycle
      · "Evidence" names how the promise will be proven: which gate,
        screenshot, benchmark, or user-visible behavior. -->
 
-### 1. <feature name>
-- **Promise:** <one sentence that is provably true when done>
-- **Evidence:** <the gate/artifact that proves it>
-- **Use case:** <the docs/USE-CASES.md case this serves — required; no case, add one or don't build it>
-- **Scope guard:** <what this item explicitly does NOT include>
-- **Status:** ready | blocked on <what> | in progress (week of <date>)
+### 1. Skip the browser gate loudly
 
-### 2. <feature name>
-- **Promise:** …
-- **Evidence:** …
-- **Scope guard:** …
+- **Promise:** `npm run verify` passes on a machine with no Chromium, and prints one line naming the component tests it skipped.
+- **Evidence:** The gate run with the Chromium removed from the path exits 0 and prints the skip line; the same run with Chromium present runs the component tests.
+- **Use case:** Run the gate — the gate must give one answer in every environment.
+- **Scope guard:** Does not add new component tests. Does not change the server test project.
 - **Status:** ready
 
-### 3. <feature name>
-- **Promise:** …
-- **Evidence:** …
-- **Scope guard:** …
+### 2. Publish a feed for the blog
+
+- **Promise:** `/blog/rss.xml` returns a valid RSS 2.0 feed listing every post, newest first.
+- **Evidence:** The built feed validates against the RSS 2.0 schema, and its item count equals the post count in `src/content/blog/`.
+- **Use case:** Publish the write-up — marketing automation needs a channel that does not depend on a human posting a link.
+- **Scope guard:** RSS only. No email digest, no social syndication.
+- **Status:** ready
+
+### 3. Turn email feedback into issues
+
+- **Promise:** A message in the feedback mailbox becomes one GitHub issue labelled `feedback`, with the sender's text quoted and no duplicate for a message already filed.
+- **Evidence:** A test run against a recorded mailbox fixture files 3 issues from 4 messages, skipping the duplicate, and the parser has unit tests for the dedupe key.
+- **Use case:** Collect feedback — the inbound half of the loop the site describes.
+- **Scope guard:** Intake only. Does not triage, label by topic, or reply to the sender.
+- **Status:** blocked on a decision about which mailbox and which credential CI may use
+
+### 4. Finish the kit tailoring
+
+- **Promise:** No `{{PLACEHOLDER}}` string remains anywhere under `agent-kit/`, and `docs/ARCHITECTURE.md`, `docs/CONFIGURATION.md` and `docs/STYLE.md` describe this repository.
+- **Evidence:** A grep for `{{` under `agent-kit/` returns nothing, and the gate stays green.
+- **Use case:** Install the kit — SETUP.md is unfinished until this is true.
+- **Scope guard:** Fills the existing kit files. Does not add new kit files or change the process.
 - **Status:** ready
 
 ## Later — candidates, not yet specced
 
-- <idea> — <one line why it might matter>
+- Render the STATUS table on the site — the project's state becomes a page, not a file a reader has to find.
+- A nightly link check over the rendered docs — the kit's cross-references rot silently as files are renamed.
+- Sub-issues per roadmap item — GitHub can hold the task breakdown the kit currently keeps in plan files.
 
 ## Shipped
 
@@ -53,13 +76,16 @@ building, it gets added here first. One item ships per weekly cycle
      and the evidence link. This is the project's real history of intent. -->
 
 | Week | Feature | Release | Evidence |
-|---|---|---|---|
+| ---- | ------- | ------- | -------- |
 
 ## Explicitly not doing
 
-- <declined idea> — <one line why; saves re-litigating it>
+- A web UI for editing the roadmap — the roadmap is a file in git so that changes carry review, history and blame. A form loses all three.
+- Auto-merging the agent's own pull requests — the gate decides what ships, a human decides what merges. That line stays.
 
 ## Queue changes
 
 <!-- Any reorder, insertion above position 3, or item removal gets one
      line here: date, what changed, why. -->
+
+- 2026-09-14 — Seeded the queue with 4 items. It was the kit's unfilled template. Items 1 and 4 come from gaps found while installing the kit; items 2 and 3 come from the loop the site describes but the repository does not yet run.

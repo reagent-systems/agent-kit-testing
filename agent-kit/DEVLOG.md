@@ -40,3 +40,34 @@ Evidence: <commit / tag / gate run / screenshot>
 ---
 
 <!-- Entries below, newest first. -->
+
+## 2026-09-14 — Installed the kit, then gave it something to work on
+
+We installed the agent kit into an empty repository. The kit is 22 markdown
+files. They set the contract for changing code, the queue that decides what
+gets built, and the gate that decides what ships.
+
+An empty repository cannot prove any of that. So we built the codebase the
+kit governs: a SvelteKit site about the kit itself. The site renders the
+kit's own files, so the docs cannot drift from the process they describe.
+
+We added one gate, `npm run verify`. It runs the lint, the type check, the
+build and the tests, in that order. The same command runs in CI.
+
+Two things broke. The default SvelteKit adapter detected no production
+environment, so the build passed while producing nothing runnable; we
+switched to adapter-node. The component tests then failed because this
+machine has Chromium build 1194 and the installed Playwright wants 1243. We
+made the browser path overridable rather than pin the repository to one
+machine. The gate still fails hard where no Chromium exists, which breaks
+the rule in VERIFICATION.md that a gate skips loudly. That is now item 1 on
+the queue.
+
+We also wired the roadmap to GitHub. A CI job parses the Feature Queue and
+mirrors each item into an issue. The roadmap stays the source; the issues
+are its surface. Writing the tests for it found a real bug before it
+shipped: an issue whose body was edited by hand lost its marker, and the
+next run filed a duplicate. Matching on the title as a fallback fixed it.
+
+Evidence: `npm run verify` green at the install commit. 4 test files,
+27 tests, 0 failures.
