@@ -41,6 +41,32 @@ Evidence: <commit / tag / gate run / screenshot>
 
 <!-- Entries below, newest first. -->
 
+## 2026-09-14 — Put the site on GitHub Pages
+
+We created `main` from the working branch and made it the branch the
+workflows watch. Dependabot noticed within a minute and opened 7 branches,
+which is the first sign the automation is live.
+
+We moved the site to GitHub Pages. That meant changing the adapter again.
+We picked adapter-node two days ago because the default adapter built
+nothing runnable. Pages serves files, not a server, so adapter-static is
+now the right one. Every page already prerendered, so the change was the
+adapter and two page options: a directory per page, and a 404 fallback.
+
+The build turned out to use relative URLs. That means the site works at
+the root and under a subdirectory without being told which. We proved it
+by copying the build into a subdirectory and serving it: 5 routes answered
+200, and a page 2 levels deep fetched its assets through `../../`.
+
+Two settings still need a human. The repository is not renamed, and the
+default branch is still the old working branch. The API proxy we work
+through refuses repository settings writes, so both are Settings clicks.
+Pages needs one too: its source must be set to GitHub Actions.
+
+Evidence: `npm run verify` green. 4 test files, 36 tests, 0 failures.
+27 HTML files in `build/`, served from `/agent-kit-testing/` with every
+route answering 200.
+
 ## 2026-09-14 — Installed the kit, then gave it something to work on
 
 We installed the agent kit into an empty repository. The kit is 22 markdown

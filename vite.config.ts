@@ -1,12 +1,24 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
-import adapter from '@sveltejs/adapter-node';
+import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 // Component tests run in a real Chromium. CI installs one with
 // `npx playwright install chromium`. Set CHROMIUM_PATH to point at a
 // Chromium that is already on the machine instead.
 const chromiumPath = process.env.CHROMIUM_PATH;
+
+// GitHub Pages serves a project site from a subdirectory, so the built
+// site needs to know its prefix. The deploy workflow sets BASE_PATH to
+// the repository name. It stays empty for local development and for a
+// custom domain served from the root.
+function normaliseBase(value: string | undefined): '' | `/${string}` {
+	const trimmed = (value ?? '').replace(/\/+$/, '');
+	if (trimmed === '') return '';
+	return trimmed.startsWith('/') ? (trimmed as `/${string}`) : `/${trimmed}`;
+}
+
+const base = normaliseBase(process.env.BASE_PATH);
 
 export default defineConfig({
 	plugins: [
@@ -16,7 +28,9 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter()
+			// Every page prerenders, so the site is a folder of files.
+			adapter: adapter({ fallback: '404.html' }),
+			paths: { base }
 		})
 	],
 	test: {

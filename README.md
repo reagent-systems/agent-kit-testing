@@ -28,18 +28,37 @@ Maintenance and marketing run on the same cycle.
 ## Stack
 
 SvelteKit 2 with Svelte 5 in runes mode, TypeScript, Vite 8, and
-`@sveltejs/adapter-node`. Requires Node 22 or later.
+`@sveltejs/adapter-static`. Requires Node 22 or later.
+
+Every page prerenders, so the build is a folder of files with no server.
 
 ## Commands
 
 ```sh
 npm install
 npm run dev       # dev server
-npm run build     # production build into build/
+npm run build     # static build into build/
 npm run verify    # the gate: lint, check, build, test
 ```
 
 CI runs the same `npm run verify`.
+
+## Hosting
+
+`.github/workflows/pages.yml` builds the site and publishes it to GitHub
+Pages on every push to `main`.
+
+The repository Settings must have **Pages → Source** set to **GitHub
+Actions**. Without that the workflow builds and then fails to deploy.
+
+The build uses relative URLs, so the site works at the root or under a
+subdirectory. The workflow still passes `BASE_PATH` from
+`actions/configure-pages`, which is what a project site needs for its
+absolute references. To build the subdirectory case locally:
+
+```sh
+BASE_PATH=/agent-kit-testing npm run build
+```
 
 ## The roadmap sync
 
