@@ -75,8 +75,9 @@ can read this repository's history and check.
 <!-- Move queue items here when done, newest first, with the release tag
      and the evidence link. This is the project's real history of intent. -->
 
-| Week | Feature | Release | Evidence |
-| ---- | ------- | ------- | -------- |
+| Week       | Feature                   | Release | Evidence                                                                                                                                            |
+| ---------- | -------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-09-14 | Agent-kit download button | —       | `npm run verify` green; `static/agent-kit.zip` built by `scripts/build-agent-kit-zip.ts`, round-tripped in `src/lib/server/zip.spec.ts`; issue #12 |
 
 ## Explicitly not doing
 
@@ -89,3 +90,4 @@ can read this repository's history and check.
      line here: date, what changed, why. -->
 
 - 2026-09-14 — Seeded the queue with 4 items. It was the kit's unfilled template. Items 1 and 4 come from gaps found while installing the kit; items 2 and 3 come from the loop the site describes but the repository does not yet run.
+- 2026-09-14 — A human filed issue #12 asking for a download button for the kit and it shipped the same day, ahead of the queue above. It did not come through the roadmap first because the queue tooling here mirrors ROADMAP.md into issues, not the other way; a human-filed issue is feedback, not a queue entry. Recorded here and in Shipped so the roadmap stays the record of what actually happened.

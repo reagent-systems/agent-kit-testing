@@ -8,6 +8,9 @@ node_modules
 /.svelte-kit
 /build
 
+# Generated at dev/build time by scripts/build-agent-kit-zip.ts
+/static/agent-kit.zip
+
 # OS
 .DS_Store
 Thumbs.db
