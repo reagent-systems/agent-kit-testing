@@ -31,15 +31,21 @@ is done.
 
 ## Triage labels
 
-Kind: `bug` · `enhancement` · `docs` · `security` · `ci-failure` ·
-`feedback`
+The list lives in `src/lib/labels.ts` and `label-sync.yml` applies it.
+Add a label there, not in Settings. Three axes, at most one of each per
+ticket:
 
-State: `needs-triage` · `needs-repro` · `ready` · `in progress` ·
-`blocked` · `wontfix`
+| Axis | Labels |
+|---|---|
+| Kind | `bug` · `enhancement` · `documentation` · `security` · `ci-failure` · `question` |
+| State | `needs-triage` · `needs-repro` · `ready` · `in-progress` · `blocked` · `wontfix` · `duplicate` |
+| Source | `roadmap` · `feedback` · `dependencies` · `github_actions` · `javascript` |
 
-Source: `roadmap` (generated — do not add by hand)
+`good first issue` and `help wanted` are orthogonal and optional.
 
-Help wanted: `good first issue` · `help wanted`
+The sync creates and updates. It never deletes: removing a label strips
+it from every issue carrying it. A label on the repository that is not in
+the list is reported as `extra` and left alone.
 
 `roadmap-sync.yml` owns the `roadmap` label and the state label on the
 issues it generates. Do not hand-edit those issues; change ROADMAP.md.

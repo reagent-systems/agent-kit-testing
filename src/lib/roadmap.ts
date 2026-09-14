@@ -140,10 +140,12 @@ export function findMarker(body: string): string | undefined {
 	return /<!--\s*roadmap-item:\s*([a-z0-9-]+)\s*-->/.exec(body)?.[1];
 }
 
+// The state labels in src/lib/labels.ts. labels.spec.ts asserts every
+// value here exists there.
 const LABEL_BY_STATUS: Record<StatusKind, string> = {
 	ready: 'ready',
 	blocked: 'blocked',
-	'in-progress': 'in progress',
+	'in-progress': 'in-progress',
 	unknown: 'needs-triage'
 };
 

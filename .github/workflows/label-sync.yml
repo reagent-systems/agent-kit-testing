@@ -1,0 +1,46 @@
+name: Label sync
+
+# Applies the label taxonomy in src/lib/labels.ts to the issues tab.
+#
+# Labels are the ticket pool's index, so they live in git and CI applies
+# them. The job creates and updates; it never deletes, because removing a
+# label strips it from every issue carrying it.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'src/lib/labels.ts'
+      - 'scripts/sync-labels.ts'
+      - '.github/workflows/label-sync.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: label-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Plan (pull request)
+        if: github.event_name == 'pull_request'
+        run: node scripts/sync-labels.ts --dry-run
+
+      - name: Sync
+        if: github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: node scripts/sync-labels.ts
