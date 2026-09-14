@@ -8,13 +8,12 @@ name: Roadmap sync
 # queue. Issue edits are overwritten; the roadmap is what changes.
 
 on:
+  # No path filter on main. GitHub skips a path-filtered workflow when a
+  # branch is created, which skipped the first sync and left the queue
+  # unmirrored. The job is idempotent and takes seconds, so it runs on
+  # every push and reports `ok` when nothing changed.
   push:
     branches: [main]
-    paths:
-      - 'agent-kit/ROADMAP.md'
-      - 'src/lib/roadmap.ts'
-      - 'scripts/sync-issues.ts'
-      - '.github/workflows/roadmap-sync.yml'
   pull_request:
     paths:
       - 'agent-kit/ROADMAP.md'

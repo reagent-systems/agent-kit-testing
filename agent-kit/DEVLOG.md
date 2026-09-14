@@ -41,6 +41,34 @@ Evidence: <commit / tag / gate run / screenshot>
 
 <!-- Entries below, newest first. -->
 
+## 2026-09-14 — The first live runs found two faults
+
+CI ran on `main` and passed. Then two things did not work.
+
+The roadmap sync never ran. It had a path filter on `agent-kit/ROADMAP.md`,
+and GitHub skips a path-filtered workflow when a branch is created. The
+first push to `main` was a branch creation, so the queue was never
+mirrored and no issues were filed. We removed the path filter on `main`.
+The job is idempotent and takes seconds, so running it on every push costs
+less than missing a run. The filter stays on pull requests, where the plan
+is only interesting when the roadmap changes.
+
+The Pages deploy failed at `actions/configure-pages`. Pages is not enabled
+for the repository, so there is no site to configure. That is a Settings
+change a human has to make.
+
+We could not work around either fault from here. The API proxy refuses
+workflow dispatches and repository settings writes, so we fixed the one
+that was ours and reported the one that is not.
+
+Dependabot opened 7 pull requests within 2 minutes of `main` existing.
+4 pass and 3 fail: vitest 5, @vitest/browser-playwright 5, and TypeScript
+7 are all major bumps. The failures are real, not flakes, and they are the
+first unplanned tickets in the pool.
+
+Evidence: run 34897757097 green on `main`. Run 34898115147 failed at step
+5, `actions/configure-pages@v5`.
+
 ## 2026-09-14 — Put the site on GitHub Pages
 
 We created `main` from the working branch and made it the branch the
